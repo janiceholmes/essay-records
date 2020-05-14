@@ -1,0 +1,13 @@
+RCNN属于two stage的目标检测方法：进行两次训练，而且是把CNN看作特征提取器，SVM对CNN中提取出来的特征进行分类。
+• 迁移学习：在大数据集上对网络进行预训练，即得到Pre-model，然后再在自己的小数据集上进行权重微调。使用少量的数据，训练高质量的模型
+• CNN使用的是alexNet。
+• Region Proposal的获得是通过selective search。（传统的物体分割方法，包括通过颜色色彩空间，纹理，层次等来分割图像中的区域；并且会采用一个区域合并的方法，来得到最终的分割区域）
+• 微调AlexNet的权重参数时，正负样例的定义为：与ground truth的IoU > 0.5正例；否则负例；网络结构的变化为：将原先的输出层4096再加上一层，最后一层的神经元数目为N+1（N为object种类个数，1为背景）
+• 训练SVM。SVM的输入为4096维的特征向量；SVM的个数为N+1（实际上就是用SVM代替了softmax层，为什么这样做，作者说他也不知道，反正就这样做的话，效果好）；正负样例的定义【比fine-tuning严格】：与ground truth的IoU > 0.3正例；否则负例.
+
+细节：
+1.	输入Region Proposal的形变操作：padding=16后，直接wrap成227*227像素。
+2.	Fine-tuning每一轮训练的batch size：正例32，负例96，total：128
+3.	因为数据量大，参数多，训练SVM的时候，使用了hard negative mining 的方法。（我不太懂这个方法）
+4.	Bounding box的回归（不太懂）
+5.	NMS的操作（有一点点不太懂）
